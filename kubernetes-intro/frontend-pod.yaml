@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: "2020-12-08T15:44:16Z"
+  labels:
+    run: frontend
+  name: frontend
+  namespace: default
+spec:
+  containers:
+  - image: 3davinci/tinyweb:0.2
+    imagePullPolicy: IfNotPresent
+    name: frontend
+
