@@ -1,21 +1,14 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  creationTimestamp: "2020-12-08T15:44:16Z"
   labels:
     run: frontend
   name: frontend
-  namespace: default
-  resourceVersion: "22174"
-
 spec:
   containers:
   - image: 3davinci/tinyweb:0.2
-    imagePullPolicy: IfNotPresent
     name: frontend
     env:
-      - name: PORT
-        value: "8080"
       - name: PRODUCT_CATALOG_SERVICE_ADDR
         value: "productcatalogservice:3550"
       - name: CURRENCY_SERVICE_ADDR
@@ -30,10 +23,4 @@ spec:
         value: "checkoutservice:5050"
       - name: AD_SERVICE_ADDR
         value: "adservice:9555"
-      - name: ENV_PLATFORM
-        value: "gcp"
-      - name: DISABLE_TRACING
-        value: "1"
-      - name: DISABLE_PROFILER
-        value: "1"
 
