@@ -6,7 +6,8 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: bob # Name is case sensitive
-  apiGroup: rbac.authorization.k8s.io
+#   apiGroup: rbac.authorization.k8s.io
+  namespace: default
 roleRef:
   kind: ClusterRole
   name: admin
