@@ -1,5 +1,6 @@
+# Bind service acc in certain namespace to cluster default admin role
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: jane
   namespace: dev
