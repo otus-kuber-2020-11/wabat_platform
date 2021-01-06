@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: dns-udp
+  namespace: kube-system
   annotations:
     metallb.universe.tf/allow-shared-ip: coredns
 spec:
@@ -19,6 +20,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: dns-tcp
+  namespace: kube-system
   annotations:
     metallb.universe.tf/allow-shared-ip: coredns
 spec:
@@ -27,7 +29,6 @@ spec:
   type: LoadBalancer
   loadBalancerIP: 172.17.255.22
   ports:
-
     - name: dnstcp
       port: 53
       protocol: TCP
