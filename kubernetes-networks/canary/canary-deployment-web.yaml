@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary
+spec:
+  strategy:
+    type: RollingUpdate    
+    rollingUpdate:
+      maxSurge: 100%      # how many pods we can add at a time      
+      maxUnavailable: 0 # maxUnavailable define how many pods can be# unavailable during the rolling update
+  replicas: 1
+  selector:
+    matchLabels:
+      app: canary
+  template:
+    metadata:
+      labels:
+        app: canary
+    spec:
+      containers:
+      - name: canary
+        image: 3davinci/tinyweb:0.1
+        imagePullPolicy: Always
+        livenessProbe:
+          tcpSocket:
+            port: 8000
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 8000
+        volumeMounts:
+          - name: app
+            mountPath: /var/www/localhost/app
+      initContainers:
+        - name: init
+          image: busybox:1.31.0
+          command: ['sh', '-c', 'wget -O- https://raw.githubusercontent.com/express42/otus-platform-snippets/master/Module-02/Introduction-to-Kubernetes/wget.sh | sh']
+          volumeMounts:
+            - name: app
+              mountPath: /app
+      volumes:
+        - name: app
+          emptyDir: {}
