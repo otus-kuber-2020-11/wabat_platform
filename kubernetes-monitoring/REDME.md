@@ -1,14 +1,13 @@
 # Мониторинг кластера kubernetes с prometheus-operator
 
-## Установка
+## Установка kube-prometheus (quick start)
+
 Один из самых простых способов начать использовать prometheus-operator - установка как часть [kube-prometheus](https://prometheus-operator.dev/docs/prologue/quick-start/#next-steps).
 
-Альтернативный способ использовать кастомизацию всей библиотеки kube-prometheus
-
-```
+```bash
 git clone https://github.com/prometheus-operator/kube-prometheus.git
 ```
-```
+```bash
 # Deploy kube-prometheus
 # Create the namespace and CRDs, and then wait for them to be availble before creating the remaining resources
 kubectl create -f manifests/setup
@@ -16,7 +15,7 @@ until kubectl get servicemonitors --all-namespaces ; do date; sleep 1; echo ""; 
 kubectl create -f manifests/
 ```
 После установки
-```
+```bash
 $ kubectl get deployments.apps -n monitoring
 NAME                  READY   UP-TO-DATE   AVAILABLE   AGE
 blackbox-exporter     1/1     1            1           2d20h
@@ -26,35 +25,31 @@ prometheus-adapter    2/2     2            2           2d20h
 prometheus-operator   1/1     1            1           2d20h
 
 ```
-```
+```bash
 $ kubectl get statefulsets.apps -n monitoring 
 NAME                READY   AGE
 alertmanager-main   3/3     2d20h
 prometheus-k8s      2/2     2d20h
 ```
 
-Prometheus Operator Deployment, and its required ClusterRole, ClusterRoleBinding, Service Account and Custom Resource Definitions
-
-Схема взаимодействия компонент
-
 ---
-Дополнительно operator имеет следующие [ресурсы](https://prometheus-operator.dev/docs/operator/design/) (CRD), которые описывают желаемое состояние кластера
+Operator имеет следующие [ресурсы](https://prometheus-operator.dev/docs/operator/design/) (CRD), которые описывают желаемое состояние кластера
 
 - Prometheus 
 
 Этот CRD предоставляет опции для конфигурации replication, persistent storage, и Alertmanagers в которые он шлет уведомления. 
 Для каждого такого ресурса Operator разворачвает сконфигурированный StatefulSet. В каждый Pod Prometheus монтируется секрет, содержащий конфигурацию Prometheus.
-Дат возможность конфигурировать этот сектер вручную или автоматически при помощи ServiceMonitor
+Можно конфигурировать этот секрет вручную или автоматически при помощи ServiceMonitor.
 
 
 - ServiceMonitor
 
-ServiceMonitor CRD описывает список целей для мониторинга
+ServiceMonitor CRD описывает список целей для мониторинга.
 Для мониторинга любого приложения должен существовать объект Endpoints, который представляет из себя список ip адресов. 
 
-1) Обычно Endpoints формируется автоматически из объекта типа Service (включая Service с несколькими портами). Service в свою очередь находит Pod по метке. 
+1) Обычно, Endpoints формируется автоматически из объекта типа Service (включая Service с несколькими портами). Service в свою очередь находит Pod по метке. 
 Пример deployment с nginx + nginx exporter
-```
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -190,7 +185,7 @@ spec:
 
 ```
 
-2) Для мониторинга ресурса находящегося вне кластера и отдающего свои метрики по пути http://10.10.0.10/metrics и объект Endpoints, и Service нужно будет создать,
+2) Для мониторинга ресурса находящегося вне кластера и отдающего свои метрики по пути http://10.10.0.10/metrics: и объект Endpoints, и Service нужно будет создать,
 ```
 apiVersion: v1
 kind: Endpoints
@@ -243,9 +238,10 @@ spec:
 
 
 ---
-## Cоздание проекта на основе библиотеки kube-prometheus
-
-для компиляции манифестов требуется gojsontoyaml и jsonnet
+ 
+## Установка с кастомизацией, создание проекта на основе библиотеки kube-prometheus
+Альтернативный способ установки и обновления мониторинга с prometheus operator - использовать кастомизацию всей библиотеки kube-prometheus.
+Для компиляции манифестов требуется gojsontoyaml и jsonnet.
 
 ```
 # создание директории под проекта
